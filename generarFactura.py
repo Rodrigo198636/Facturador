@@ -3,7 +3,7 @@ from tkinter import ttk
 from tkinter import messagebox
 from fpdf import FPDF
 from datetime import datetime
-import random
+import random, os
 
 def generar_factura():
     
@@ -46,38 +46,80 @@ def generar_factura():
     pdf.set_xy(10, y_actual + 30)  
 
     pdf.set_font('Arial', size=12)
-    pdf.cell(0, 10, f'Numero de Factura: {identificador_factura}', ln=True, align='C')
+    pdf.cell(0, 10, f'N° de Factura: {identificador_factura}', ln=True, align='C')
 
 
     pdf.set_font('Arial', size=12)
     pdf.cell(0, 10, '-----------------------------------------', ln=True, align='L')
 
-    pdf.cell(0,10, 'Datos del Cliente', ln=True, align='L')
-    pdf.cell(0,10, f'Nombre: {nombre_cliente}', ln=True, align='L')
-    pdf.cell(0,10, f'Apellido/s: {apellidos_cliente}', ln=True, align='L')
-    pdf.cell(0,10, f'Telefono: {telefono_cliente}', ln=True, align='L')
-    pdf.cell(0,10, f'DNI: {dni_cliente}', ln=True, align='L')
-    pdf.cell(0,10, f'Ciudad: {ciudad_cliente}', ln=True, align='L')
+   
+    pdf.set_font('Arial', 'B', 12)
+    pdf.cell(0, 10, 'Datos del Cliente', ln=True, align='L')
 
-    pdf.cell(0,10, 'Detalles del Servicio', ln=True, align='L')
+    pdf.set_font('Arial', 'B', 12)
+    pdf.cell(30, 10, 'Nombre:', border=0, ln=0)
+    pdf.set_font('Arial', '', 12)
+    pdf.cell(0, 10, nombre_cliente, ln=True)
 
-    pdf.cell(0,10, '-----------------------------------------', ln=True, align='L')
-    pdf.cell(60,10, 'Nombre del Servicio', border=1)
-    pdf.cell(80,10, 'Descripción del Servicio', border=1)
-    pdf.cell(30,10, 'Total', border=1, ln=True)
+    pdf.set_font('Arial', 'B', 12)
+    pdf.cell(30, 10, 'Apellido/s:', border=0, ln=0)
+    pdf.set_font('Arial', '', 12)
+    pdf.cell(0, 10, apellidos_cliente, ln=True)
 
-    pdf.cell(60,10, nombre_servicio, border=1)
-    pdf.cell(80,10, descrpcion_servicio, border=1)
-    pdf.cell(30,10, f'${total_servicio}', border=1, ln=True)
+    pdf.set_font('Arial', 'B', 12)
+    pdf.cell(30, 10, 'Teléfono:', border=0, ln=0)
+    pdf.set_font('Arial', '', 12)
+    pdf.cell(0, 10, telefono_cliente, ln=True)
+
+    pdf.set_font('Arial', 'B', 12)
+    pdf.cell(30, 10, 'DNI:', border=0, ln=0)
+    pdf.set_font('Arial', '', 12)
+    pdf.cell(0, 10, dni_cliente, ln=True)
+
+    pdf.set_font('Arial', 'B', 12)
+    pdf.cell(30, 10, 'Ciudad:', border=0, ln=0)
+    pdf.set_font('Arial', '', 12)
+    pdf.cell(0, 10, ciudad_cliente, ln=True)
+
+    # Otro título en negrita
+    pdf.set_font('Arial', 'B', 12)
+    pdf.cell(0, 10, 'Detalles del Servicio', ln=True, align='L')
+
+    pdf.cell(0, 10, '-----------------------------------------', ln=True, align='L')
+
+    pdf.set_font('Arial', 'B', 12)
+    pdf.cell(60, 10, 'Nombre del Servicio', border=1)
+    pdf.cell(80, 10, 'Descripción del Servicio', border=1)
+    pdf.cell(30, 10, 'Total', border=1, ln=True)
+
+    
+    pdf.set_font('Arial', '', 12)
+    pdf.cell(60, 10, nombre_servicio, border=1)
+    pdf.cell(80, 10, descrpcion_servicio, border=1)
+    pdf.cell(30, 10, f'${total_servicio}', border=1, ln=True)
+
+    pdf.cell(0, 10, '========================================', ln=True, align='L')
+
+    pdf.set_text_color(0, 0, 255)
+
+    pdf.cell(0, 10, 'Gracias por usar nuestro Servicio !!!', ln=True, align='C')
+
+    pdf.set_text_color(0, 0, 0)
 
 
-    pdf.cell(0,10, '========================================', ln=True, align='L')
-    pdf.cell(0,10, 'Gracias por usar nuestro Servicio', ln=True, align='C')
+    pdf_file = f'Factura_{nombre_cliente}_{apellidos_cliente}.pdf'
+    carpeta = 'facturas'
 
+    # Crear carpeta si no existe
+    if not os.path.exists(carpeta):
+        os.makedirs(carpeta)
 
-    pdf_file= f'Factura_{nombre_cliente}_{apellidos_cliente}.pdf'
-    pdf.output(pdf_file, 'F')
-    messagebox.showinfo('Factura Generada')
+    ruta_archivo = os.path.join(carpeta, pdf_file)
+
+    # Guardar el PDF en la carpeta 'facturas'
+    pdf.output(ruta_archivo, 'F')
+
+    messagebox.showinfo('Factura Generada', f'Factura guardada en: {ruta_archivo}')
 
 
 
