@@ -1,9 +1,20 @@
 import tkinter as tk
 from tkinter import ttk
 from tkinter import messagebox
+from tkinter import filedialog
 from fpdf import FPDF
 from datetime import datetime
-import random, os
+import random
+import sys
+import os
+
+def resource_path(relative_path):
+    """ Obtener ruta absoluta, funciona para PyInstaller """
+    try:
+        base_path = sys._MEIPASS
+    except Exception:
+        base_path = os.path.abspath(".")
+    return os.path.join(base_path, relative_path)
 
 def generar_factura():
     
@@ -23,8 +34,8 @@ def generar_factura():
     pdf = FPDF()
     pdf.add_page()
 
-    logo_path = 'logoCadetUsh.png'
-    logo_path_x = 'facturaX.png'
+    logo_path = resource_path('logoCadetUsh.png')
+    logo_path_x = resource_path('facturaX.png')
     pdf.image(logo_path, x=160, y=8, w=40)
     
 
@@ -106,20 +117,26 @@ def generar_factura():
 
     pdf.set_text_color(0, 0, 0)
 
-
+    #ruta para generar un dialogo con el cliente y guardar las facturas en la carpeta que el elija
     pdf_file = f'Factura_{nombre_cliente}_{apellidos_cliente}.pdf'
-    carpeta = 'facturas'
 
-    # Crear carpeta si no existe
-    if not os.path.exists(carpeta):
-        os.makedirs(carpeta)
+    ruta_archivo = filedialog.asksaveasfilename(
+        defaultextension=".pdf",
+        initialfile=pdf_file,
+        filetypes=[("Archivos PDF", "*.pdf")],
+        title="Guardar Factura"
+    )
 
-    ruta_archivo = os.path.join(carpeta, pdf_file)
+    if ruta_archivo:
+        pdf.output(ruta_archivo, 'F')
+        messagebox.showinfo('Factura Generada', f'Factura guardada en: {ruta_archivo}')
+    else:
+        messagebox.showwarning('Guardado cancelado', 'No se guardó la factura.')
 
-    # Guardar el PDF en la carpeta 'facturas'
-    pdf.output(ruta_archivo, 'F')
+        
 
-    messagebox.showinfo('Factura Generada', f'Factura guardada en: {ruta_archivo}')
+
+
 
 
 
